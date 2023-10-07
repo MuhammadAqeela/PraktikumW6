@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Table from URL</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
+    h1 {
+      color: #333;
+    }
+    #urlInput {
+      width: 300px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-right: 10px;
+    }
+    #fetchButton {
+      padding: 10px 20px;
+      background-color: #007BFF;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+    #fetchButton:hover {
+      background-color: #0056b3;
+    }
+    #dataTable {
+      margin-top: 20px;
+      border-collapse: collapse;
+      width: 100%;
+      border: 2px solid #007BFF;
+      background-color: #fff;
+    }
+    #dataTable th, #dataTable td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: center;
+    }
+    #dataTable th {
+      background-color: #f2f2f2;
+    }
+  </style>
+</head>
+<body>
+  <h1>Data Table from URL</h1>
+  <input type="text" id="urlInput" placeholder="Enter URL">
+  <button id="fetchButton" onclick="fetchData()">Fetch Data</button>
+  
+  <table id="dataTable">
+    <thead>
+      <tr id="tableHeaders"></tr>
+    </thead>
+    <tbody id="dataBody"></tbody>
+  </table>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    function fetchData() {
+      const url = document.getElementById('urlInput').value;
+      if (!url) {
+        alert('Please enter a URL.');
+        return;
+      }
+
+      axios.get(url)
+        .then(response => {
+          const data = response.data;
+          displayData(data);
+        })
+        .catch(error => {
+          alert('An error occurred while fetching data.');
+          console.error(error);
+        });
+    }
+
+    function displayData(data) {
+      const dataTable = document.getElementById('dataTable');
+      const tableHeaders = document.getElementById('tableHeaders');
+      const dataBody = document.getElementById('dataBody');
+      dataBody.innerHTML = '';
+
+      // Clear previous headers
+      tableHeaders.innerHTML = '';
+
+      // Extract headers from the first item in the data
+      const headers = Object.keys(data[0]);
+
+      // Create header cells
+      headers.forEach(header => {
+        const th = document.createElement('th');
+        th.textContent = header;
+        tableHeaders.appendChild(th);
+      });
+
+      // Fill data rows
+      data.forEach(item => {
+        const row = document.createElement('tr');
+        headers.forEach(header => {
+          const cell = document.createElement('td');
+          cell.textContent = item[header];
+          row.appendChild(cell);
+        });
+        dataBody.appendChild(row);
+      });
+    }
+  </script>
+</body>
+</html>
